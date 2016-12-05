@@ -1,13 +1,4 @@
-# Pi2Go basic motor sketch - for the first episode of my robot tutorial series.
-# In truth this program is very simple - the parts where it captures key presses is the daunting bit.
-# Try to work through it slowly and you'll soon understand!
-
-# Use the arrow keys to control the direction of the Pi2Go and use the 'greater than' and 'less than'
-# keys to edit the speed!
-
 import pi2go, time
-
-# Reading a button press from your keyboard, don't worry about this too much!
 import sys
 import tty
 import termios
@@ -17,6 +8,7 @@ DOWN = 1
 RIGHT = 2
 LEFT = 3
 
+# Code taken from a StackOverflow tutorial on reading input from a keyboard, don't ask me how this works!
 def readchar():
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
@@ -29,6 +21,8 @@ def readchar():
         raise KeyboardInterrupt
     return ch
 
+# 0=Up, 1=Down, 2=Right, 3=Left arrows
+
 def readkey(getchar_fn=None):
     getchar = getchar_fn or readchar
     c1 = getchar()
@@ -38,44 +32,32 @@ def readkey(getchar_fn=None):
     if ord(c2) != 0x5b:
         return c1
     c3 = getchar()
-    return ord(c3) - 65  # 0=Up, 1=Down, 2=Right, 3=Left arrows
+    return ord(c3) - 65  
 
-# End of the functions that read your keyboard
+# End of keyboard code, now my stuff! 
 
-speed = 30
+
+speed = 50
 
 pi2go.init()
 
-# Main body of code - this detects your key press and changes direction depending on it
+# Motor control bit. 
 try:
     while True:
         keyp = readkey()
         if keyp == 'w' or keyp == UP:
             pi2go.forward(speed)
-            print 'Forward', speed
         elif keyp == 's' or keyp == DOWN:
             pi2go.reverse(speed)
-            print 'Backward', speed
         elif keyp == 'd' or keyp == RIGHT:
             pi2go.spinRight(speed)
-            print 'Spin Right', speed
         elif keyp == 'a' or keyp == LEFT:
             pi2go.spinLeft(speed)
-            print 'Spin Left', speed
-
-        elif keyp == '.' or keyp == '>':
-            speed = min(100, speed+10)
-            print 'Speed+', speed
-        elif keyp == ',' or keyp == '<':
-            speed = max (0, speed-10)
-            print 'Speed-', speed
-
         elif keyp == ' ':
             pi2go.stop()
-            print 'Stop'
         elif ord(keyp) == 3:
             break
 
-# When you want to exit - press ctrl+c and it will generate a keyboard interrupt - this is handled nicely here!
+# press ctrl+c and it will stop the program
 except KeyboardInterrupt:
     pi2go.cleanup()
