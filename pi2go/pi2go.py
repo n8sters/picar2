@@ -4,11 +4,10 @@ from extra_tools.sgh_PCF8591P import sgh_PCF8591P
 
 GPIO.setwarnings(False) 
 
-# Define Type of Pi2Go
 PGNone = 0
 PGFull = 1
 PGLite = 2
-PGType = PGNone # Set to None until we find out which during init()
+PGType = PGNone 
 
 # Pins 24 and 26 are for the Left Motor
 # Pins 19 and 21 control the Right Motor
@@ -19,10 +18,6 @@ R2 = 21
 
 ServosActive = False
 
-#======================================================================
-# General Functions
-#
-# init(). Initialises GPIO pins
 def init():
     global p, q, a, b, pwm, pcfADC, PGType
     PGType = PGFull
@@ -68,18 +63,16 @@ def cleanup():
     GPIO.cleanup()
 
 
-# version(). Returns 1 for Full Pi2Go, and 2 for Pi2Go-Lite. Invalid until after init() has been called
 def version():
     return PGType
 
-# stop(): Stops both motors
 def stop():
     p.ChangeDutyCycle(0)
     q.ChangeDutyCycle(0)
     a.ChangeDutyCycle(0)
     b.ChangeDutyCycle(0)
     
-#Speed is set in the control file for easy access!
+# Speed value is set in the motor file for easy access!
 
 def forward(speed):
     p.ChangeDutyCycle(speed)
